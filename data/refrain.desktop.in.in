@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Refrain
+Comment=No description
+Exec=@GETTEXT_PACKAGE@
+Icon=@APP_ID@
+Terminal=false
+Type=Application
+Categories=GTK;AudioVideo;Audio;
+StartupNotify=true

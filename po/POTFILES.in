@@ -1,0 +1,7 @@
+data/app.drey.Refrain.desktop.in
+data/app.drey.Refrain.appdata.xml.in
+data/app.drey.Refrain.gschema.xml
+src/window.ui
+src/main.vala
+src/window.vala
+
