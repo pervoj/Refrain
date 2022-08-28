@@ -17,12 +17,6 @@
       <foaf:mbox rdf:resource="mailto:info@pervoj.cz" />
       <foaf:account>
         <foaf:OnlineAccount>
-          <foaf:accountServiceHomepage rdf:resource="https://gitlab.com" />
-          <foaf:accountName>pervoj</foaf:accountName>
-        </foaf:OnlineAccount>
-      </foaf:account>
-      <foaf:account>
-        <foaf:OnlineAccount>
           <foaf:accountServiceHomepage rdf:resource="https://gitlab.gnome.org" />
           <foaf:accountName>pervoj</foaf:accountName>
         </foaf:OnlineAccount>
