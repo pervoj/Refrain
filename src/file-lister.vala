@@ -1,4 +1,4 @@
-/* file-listervala
+/* file-lister.vala
  *
  * Copyright 2022 Vojtěch Perník
  *
