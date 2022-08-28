@@ -75,6 +75,7 @@ public class Refrain.FileLister : Object {
                 // check if the file is an audio file
                 var type = info.get_content_type ();
                 if (
+                    // credits: G4Music by Nanling Zheng
                     type != null &&
                     ContentType.is_mime_type ((!)type, "audio/*") &&
                     !((!)type).has_suffix ("url")
