@@ -1,6 +1,7 @@
 sources = [
   'application.vala',
   'window.vala',
+  'file-lister.vala',
 ]
 
 
@@ -11,6 +12,7 @@ blueprints_src = [
 
 dependencies = [
   dependency('libadwaita-1', version: '>= 1.0'),
+  dependency('gio-2.0', version: '>= 2.72'),
 ]
 
 
