@@ -1,6 +1,7 @@
 sources = [
   'application.vala',
   'window.vala',
+  'db.vala',
   'file-lister.vala',
 ]
 
