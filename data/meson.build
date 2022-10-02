@@ -56,10 +56,4 @@ if compile_schemas.found()
 endif
 
 
-install_data(
-  'db.sqlite3',
-  install_dir: join_paths(get_option('datadir'), meson.project_name())
-)
-
-
 subdir('icons')
