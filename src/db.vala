@@ -17,6 +17,8 @@
  */
 
 public class Refrain.DB : Object {
+    const string FILE_NAME = "db.sqlite3";
+
     private static Sqlite.Database db;
 
     /**
@@ -26,7 +28,7 @@ public class Refrain.DB : Object {
      */
     public static bool init (bool reinit = false) {
         // DB file path
-        var db_path = Path.build_filename (Constants.DATA_DIR, "db.sqlite3");
+        var db_path = Path.build_filename (Constants.DATA_DIR, FILE_NAME);
 
         // init only if not inited before or if we want to reinit
         if (db == null || reinit) {
