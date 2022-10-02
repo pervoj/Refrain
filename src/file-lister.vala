@@ -19,18 +19,16 @@
 public class Refrain.FileLister : Object {
 
     /** list of all recursively found files in the search dirs */
-    private Array<File> found_files {
-        get; private set; default = new Array<File> ();
-    }
+    private Array<File> found_files = new Array<File> ();
 
     /** temporary list of all dirs and subdirs to search in
         will be gradually cleaned up */
-    private Array<File> dirs_to_list {
-        get; private set; default = new Array<File> ();
-    }
+    private Array<File> dirs_to_list = new Array<File> ();
 
-    /** array of all recursively found files in the search dirs */
-    public File[] files { get; private set; }
+    /** get array of all recursively found files in the search dirs */
+    public File[] get_files () {
+        return found_files.data;
+    }
 
     public FileLister (File[] search_dirs) throws Error {
         // run through all the search dirs
@@ -85,8 +83,5 @@ public class Refrain.FileLister : Object {
                 }
             }
         }
-
-        // convert the Array to regular Vala array
-        files = found_files.data;
     }
 }
