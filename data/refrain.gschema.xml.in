@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="@GETTEXT_PACKAGE@">
-	<schema id="@APP_ID@" path="@RESOURCE_PATH@/">
-	</schema>
+  <schema id="@APP_ID@" path="@RESOURCE_PATH@/">
+    <key name="directories" type="as">
+      <default>[]</default>
+      <summary>Directories</summary>
+      <description>Directories to look for the music in</description>
+    </key>
+  </schema>
 </schemalist>
