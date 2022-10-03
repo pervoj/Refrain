@@ -36,8 +36,12 @@ public class Refrain.Window : Adw.ApplicationWindow {
 
     private void adapt () {
         if (default_width < 420) {
+            remove_css_class ("desktop");
+            add_css_class ("mobile");
             playback_controls.adapt_mobile ();
         } else {
+            add_css_class ("desktop");
+            remove_css_class ("mobile");
             playback_controls.adapt_desktop ();
         }
     }
