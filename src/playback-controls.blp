@@ -19,23 +19,27 @@
 using Gtk 4.0;
 using Adw 1;
 
-template RefrainPlaybackControls : Gtk.Box {
-    orientation: vertical;
+template RefrainPlaybackControls : Adw.Bin {
+    Gtk.Overlay {
+        [overlay]
+        Gtk.ProgressBar progress_bar {
+            styles ["osd"]
+            valign: start;
+        }
 
-    Gtk.ProgressBar progress_bar {
-        styles ["osd"]
+        Gtk.Box {
+            styles ["playback-controls"]
+
+            Gtk.Scale scale {
+                hexpand: true;
+                adjustment: Gtk.Adjustment {
+                    value: 0;
+                    lower: 0;
+                    upper: 60;
+                    step-increment: 1;
+                    page-increment: 5;
+                };
+            }
+        }
     }
-
-    Gtk.Scale scale {
-        orientation: horizontal;
-        adjustment: Gtk.Adjustment {
-            value: 0;
-            lower: 0;
-            upper: 60;
-            step-increment: 1;
-            page-increment: 5;
-        };
-    }
-
-    Gtk.Box {}
 }

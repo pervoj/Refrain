@@ -1,0 +1,5 @@
+.playback-controls {
+    background-color: @headerbar_bg_color;
+    color: @headerbar_fg_color;
+    border-top: 1px solid @headerbar_shade_color;
+}

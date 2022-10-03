@@ -17,7 +17,7 @@
  */
 
 [GtkTemplate (ui = "/app/drey/Refrain/playback-controls.ui")]
-public class Refrain.PlaybackControls : Gtk.Box {
+public class Refrain.PlaybackControls : Adw.Bin {
     [GtkChild]
     private unowned Gtk.ProgressBar progress_bar;
 
