@@ -2,6 +2,7 @@
 <gresources>
   <gresource prefix="@RESOURCE_PATH_PREFIX@">
     <file>window.ui</file>
+    <file>playback-controls.ui</file>
     <file>style.css</file>
   </gresource>
   <gresource prefix="@RESOURCE_PATH@">

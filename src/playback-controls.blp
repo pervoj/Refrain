@@ -1,4 +1,4 @@
-/* window.vala
+/* playback-controls.blp
  *
  * Copyright 2022 Vojtěch Perník
  *
@@ -16,12 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-[GtkTemplate (ui = "/app/drey/Refrain/window.ui")]
-public class Refrain.Window : Adw.ApplicationWindow {
-    [GtkChild]
-    private unowned PlaybackControls playback_controls;
+using Gtk 4.0;
+using Adw 1;
 
-    public Window (Gtk.Application app) {
-        Object (application: app);
+template RefrainPlaybackControls : Gtk.Box {
+    orientation: vertical;
+
+    Gtk.ProgressBar progress_bar {
+        styles ["osd"]
     }
+
+    Gtk.Scale scale {
+        orientation: horizontal;
+        adjustment: Gtk.Adjustment {
+            value: 0;
+            lower: 0;
+            upper: 60;
+            step-increment: 1;
+            page-increment: 5;
+        };
+    }
+
+    Gtk.Box {}
 }

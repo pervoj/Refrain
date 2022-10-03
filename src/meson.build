@@ -1,6 +1,7 @@
 sources = [
   'application.vala',
   'window.vala',
+  'playback-controls.vala',
   'db.vala',
   'file-lister.vala',
 ]
@@ -8,6 +9,7 @@ sources = [
 
 blueprints_src = [
   'window.blp',
+  'playback-controls.blp',
 ]
 
 
