@@ -8,10 +8,6 @@
     padding: 5px 10px;
 }
 
-.playback-controls .cover {
-    background-color: #ffffff;
-}
-
 .desktop .playback-controls .cover {
     border-radius: 6px;
     min-width: 56px;
