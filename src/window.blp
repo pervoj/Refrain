@@ -37,6 +37,12 @@ template RefrainWindow : Adw.ApplicationWindow {
 
                     Adw.HeaderBar {
                         show-end-title-buttons: bind main_leaflet.folded;
+
+                        [end]
+                        Gtk.MenuButton {
+                            icon-name: "open-menu-symbolic";
+                            menu-model: main_menu;
+                        }
                     }
                     Gtk.Box {
                         Gtk.Label { label: "1"; }
