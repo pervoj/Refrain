@@ -23,5 +23,9 @@ public class Refrain.Window : Adw.ApplicationWindow {
 
     public Window (Gtk.Application app) {
         Object (application: app);
+
+        #if DEVEL
+            add_css_class ("devel");
+        #endif
     }
 }
