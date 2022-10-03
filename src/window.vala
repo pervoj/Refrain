@@ -23,9 +23,22 @@ public class Refrain.Window : Adw.ApplicationWindow {
 
     public Window (Gtk.Application app) {
         Object (application: app);
+    }
 
+    construct {
         #if DEVEL
             add_css_class ("devel");
         #endif
+
+        adapt ();
+        notify["default-width"].connect (adapt);
+    }
+
+    private void adapt () {
+        if (default_width < 420) {
+            playback_controls.adapt_mobile ();
+        } else {
+            playback_controls.adapt_desktop ();
+        }
     }
 }

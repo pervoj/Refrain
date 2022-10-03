@@ -40,4 +40,14 @@ public class Refrain.PlaybackControls : Adw.Bin {
             }
         );
     }
+
+    public void adapt_desktop () {
+        progress_bar.visible = false;
+        scale.visible = true;
+    }
+
+    public void adapt_mobile () {
+        progress_bar.visible = true;
+        scale.visible = false;
+    }
 }
