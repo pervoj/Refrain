@@ -22,6 +22,12 @@ public class Refrain.PlaybackControls : Adw.Bin {
     private unowned Gtk.ProgressBar progress_bar;
 
     [GtkChild]
+    private unowned Gtk.Box desktop_controls;
+
+    [GtkChild]
+    private unowned Gtk.Box mobile_controls;
+
+    [GtkChild]
     private unowned Gtk.Scale scale;
 
     construct {
@@ -43,11 +49,13 @@ public class Refrain.PlaybackControls : Adw.Bin {
 
     public void adapt_desktop () {
         progress_bar.visible = false;
-        scale.visible = true;
+        desktop_controls.visible = true;
+        mobile_controls.visible = false;
     }
 
     public void adapt_mobile () {
         progress_bar.visible = true;
-        scale.visible = false;
+        desktop_controls.visible = false;
+        mobile_controls.visible = true;
     }
 }

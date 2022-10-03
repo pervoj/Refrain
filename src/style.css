@@ -3,3 +3,30 @@
     color: @headerbar_fg_color;
     border-top: 1px solid @headerbar_shade_color;
 }
+
+.desktop .playback-controls {
+    padding: 5px 10px;
+}
+
+.playback-controls .cover {
+    background-color: #ffffff;
+}
+
+.desktop .playback-controls .cover {
+    border-radius: 6px;
+    min-width: 56px;
+    min-height: 56px;
+}
+
+.mobile .playback-controls .cover {
+    min-width: 44px;
+    min-height: 44px;
+}
+
+.desktop .playback-controls .metadata {
+    padding: 5px;
+}
+
+.playback-controls .mobile-controls {
+    padding: 5px;
+}

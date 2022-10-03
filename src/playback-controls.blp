@@ -29,16 +29,94 @@ template RefrainPlaybackControls : Adw.Bin {
 
         Gtk.Box {
             styles ["playback-controls"]
+            spacing: 5;
 
-            Gtk.Scale scale {
+            Gtk.Image {
+                styles ["cover"]
+                valign: center;
+                icon-name: "folder-music-symbolic";
+                icon-size: large;
+            }
+
+            Gtk.Box {
+                styles ["metadata"]
+                orientation: vertical;
+                valign: center;
+
+                Gtk.Label title {
+                    styles ["heading"]
+                    halign: start;
+                    label: "Title";
+                }
+
+                Gtk.Box author {
+                    styles ["caption"]
+                    spacing: 3;
+
+                    Gtk.Label {
+                        label: "Author";
+                    }
+
+                    Gtk.Label {
+                        label: "•";
+                    }
+
+                    Gtk.Label album {
+                        label: "Album";
+                    }
+                }
+            }
+
+            Gtk.Box desktop_controls {
+                orientation: vertical;
+
+                Gtk.Box {
+                    halign: center;
+                    Gtk.Button {
+                        styles ["circular"]
+                        icon-name: "media-playback-start-symbolic";
+                    }
+                }
+
+                Adw.Clamp {
+                    tightening-threshold: 300;
+                    maximum-size: 600;
+
+                    Gtk.Box {
+                        styles ["caption"]
+
+                        Gtk.Label {
+                            label: "0:02";
+                        }
+
+                        Gtk.Scale scale {
+                            hexpand: true;
+                            adjustment: Gtk.Adjustment {
+                                value: 0;
+                                lower: 0;
+                                upper: 60;
+                                step-increment: 1;
+                                page-increment: 5;
+                            };
+                        }
+
+                        Gtk.Label {
+                            label: "0:05";
+                        }
+                    }
+                }
+            }
+
+            Gtk.Box mobile_controls {
+                styles ["mobile-controls"]
                 hexpand: true;
-                adjustment: Gtk.Adjustment {
-                    value: 0;
-                    lower: 0;
-                    upper: 60;
-                    step-increment: 1;
-                    page-increment: 5;
-                };
+                halign: end;
+                valign: center;
+
+                Gtk.Button {
+                    styles ["circular", "flat"]
+                    icon-name: "media-playback-start-symbolic";
+                }
             }
         }
     }
