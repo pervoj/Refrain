@@ -4,6 +4,10 @@
     border-top: 1px solid @headerbar_shade_color;
 }
 
+.playback-controls .cover {
+    background-color: @card_bg_color;
+}
+
 .desktop .playback-controls {
     padding: 5px 10px;
 }
