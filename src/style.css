@@ -16,6 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+.app-sidebar {
+    min-width: 250px;
+}
+
+.app-sidebar > separator,
+.app-sidebar > box {
+    margin-left: 6px;
+    margin-right: 6px;
+}
+
 .playback-controls {
     background-color: @headerbar_bg_color;
     color: @headerbar_fg_color;

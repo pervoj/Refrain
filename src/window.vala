@@ -19,6 +19,18 @@
 [GtkTemplate (ui = "/app/drey/Refrain/window.ui")]
 public class Refrain.Window : Adw.ApplicationWindow {
     [GtkChild]
+    private unowned Adw.Leaflet main_leaflet;
+
+    [GtkChild]
+    private unowned Gtk.Button navigate_back;
+
+    [GtkChild]
+    private unowned Gtk.ListBox sidebar_main;
+
+    [GtkChild]
+    private unowned Gtk.ListBox sidebar_playlists;
+
+    [GtkChild]
     private unowned PlaybackControls playback_controls;
 
     public Window (Gtk.Application app) {
@@ -30,8 +42,31 @@ public class Refrain.Window : Adw.ApplicationWindow {
             add_css_class ("devel");
         #endif
 
+        // navigate back button
+        navigate_back.clicked.connect (() => {
+            main_leaflet.navigate (Adw.NavigationDirection.BACK);
+        });
+
+        // sidebar rows activate action
+        sidebar_main.row_activated.connect ((row) => {
+            sidebar_change_active (true);
+        });
+        sidebar_playlists.row_activated.connect ((row) => {
+            sidebar_change_active (false);
+        });
+
+        // adaptable window
         adapt ();
         notify["default-width"].connect (adapt);
+    }
+
+    private void sidebar_change_active (bool main_list) {
+        if (main_list) {
+            sidebar_playlists.unselect_all ();
+        } else {
+            sidebar_main.unselect_all ();
+        }
+        main_leaflet.navigate (Adw.NavigationDirection.FORWARD);
     }
 
     private void adapt () {
