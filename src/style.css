@@ -26,6 +26,10 @@
     margin-right: 6px;
 }
 
+.content-stack {
+    padding: 32px 12px;
+}
+
 .playback-controls {
     background-color: @headerbar_bg_color;
     color: @headerbar_fg_color;

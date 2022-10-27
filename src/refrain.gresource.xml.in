@@ -3,6 +3,8 @@
   <gresource prefix="@RESOURCE_PATH_PREFIX@">
     <file>window.ui</file>
     <file>playback-controls.ui</file>
+    <file>page-item.ui</file>
+    <file>queue-page.ui</file>
     <file>style.css</file>
   </gresource>
   <gresource prefix="@RESOURCE_PATH@">

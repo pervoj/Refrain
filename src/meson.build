@@ -2,6 +2,9 @@ sources = [
   'application.vala',
   'window.vala',
   'playback-controls.vala',
+  'page.vala',
+  'page-item.vala',
+  'queue-page.vala',
   'db.vala',
   'file-lister.vala',
 ]
@@ -10,6 +13,8 @@ sources = [
 blueprints_src = [
   'window.blp',
   'playback-controls.blp',
+  'page-item.blp',
+  'queue-page.blp',
 ]
 
 

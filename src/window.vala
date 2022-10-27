@@ -18,6 +18,8 @@
 
 [GtkTemplate (ui = "/app/drey/Refrain/window.ui")]
 public class Refrain.Window : Adw.ApplicationWindow {
+    public string content_title { get; private set; }
+
     [GtkChild]
     private unowned Adw.Leaflet main_leaflet;
 
@@ -29,6 +31,9 @@ public class Refrain.Window : Adw.ApplicationWindow {
 
     [GtkChild]
     private unowned Gtk.ListBox sidebar_playlists;
+
+    [GtkChild]
+    private unowned Gtk.Stack stack;
 
     [GtkChild]
     private unowned PlaybackControls playback_controls;
@@ -47,9 +52,20 @@ public class Refrain.Window : Adw.ApplicationWindow {
             main_leaflet.navigate (Adw.NavigationDirection.BACK);
         });
 
+        // content headerbar title
+        stack.notify["visible-child"].connect (() => {
+            content_title = ((Page) stack.visible_child).title;
+        });
+
+        // add pages
+        add_page (new QueuePage ());
+        add_page (new Page ("interprets", "Interprets", "avatar-default-symbolic"));
+        add_page (new Page ("albums", "Albums", "media-optical-cd-audio-symbolic"));
+
         // sidebar rows activate action
         sidebar_main.row_activated.connect ((row) => {
             sidebar_change_active (true);
+            stack.visible_child_name = ((PageItem) row.child).name;
         });
         sidebar_playlists.row_activated.connect ((row) => {
             sidebar_change_active (false);
@@ -58,6 +74,11 @@ public class Refrain.Window : Adw.ApplicationWindow {
         // adaptable window
         adapt ();
         notify["default-width"].connect (adapt);
+    }
+
+    private void add_page (Page page) {
+        stack.add_named (page, page.name);
+        sidebar_main.append (page.menu_item);
     }
 
     private void sidebar_change_active (bool main_list) {

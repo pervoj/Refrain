@@ -54,46 +54,6 @@ template RefrainWindow : Adw.ApplicationWindow {
 
                             Gtk.ListBox sidebar_main {
                                 styles ["navigation-sidebar"]
-
-                                Gtk.Box {
-                                    spacing: 5;
-
-                                    Gtk.Image {
-                                        icon-name: "go-home-symbolic";
-                                    }
-                                    Gtk.Label {
-                                        hexpand: true;
-                                        halign: start;
-                                        ellipsize: end;
-                                        label: "Home";
-                                    }
-                                }
-                                Gtk.Box {
-                                    spacing: 5;
-
-                                    Gtk.Image {
-                                        icon-name: "avatar-default-symbolic";
-                                    }
-                                    Gtk.Label {
-                                        hexpand: true;
-                                        halign: start;
-                                        ellipsize: end;
-                                        label: "Interprets";
-                                    }
-                                }
-                                Gtk.Box {
-                                    spacing: 5;
-
-                                    Gtk.Image {
-                                        icon-name: "media-optical-cd-audio-symbolic";
-                                    }
-                                    Gtk.Label {
-                                        hexpand: true;
-                                        halign: start;
-                                        ellipsize: end;
-                                        label: "Albums";
-                                    }
-                                }
                             }
                             Gtk.Separator {
                                 visible: bind sidebar_playlists.visible;
@@ -130,13 +90,24 @@ template RefrainWindow : Adw.ApplicationWindow {
                         hexpand: true;
                         show-start-title-buttons: bind main_leaflet.folded;
 
+                        [title]
+                        Adw.WindowTitle {
+                            title: bind RefrainWindow.content-title;
+                        }
+
                         [start]
                         Gtk.Button navigate_back {
                             icon-name: "go-previous-symbolic";
                             visible: bind main_leaflet.folded;
                         }
                     }
-                    Gtk.Stack stack {}
+                    Gtk.ScrolledWindow {
+                        vexpand: true;
+
+                        Gtk.Stack stack {
+                            styles ["content-stack"]
+                        }
+                    }
                 }
             }
             .RefrainPlaybackControls playback_controls {}
