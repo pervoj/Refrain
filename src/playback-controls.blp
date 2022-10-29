@@ -31,11 +31,17 @@ template RefrainPlaybackControls : Adw.Bin {
             styles ["playback-controls"]
             spacing: 5;
 
-            Gtk.Image {
-                styles ["cover"]
+            Gtk.Button {
+                styles ["cover-button"]
+                has-frame: false;
                 valign: center;
-                icon-name: "folder-music-symbolic";
-                icon-size: large;
+
+                Gtk.Image {
+                    styles ["cover"]
+                    valign: center;
+                    icon-name: "folder-music-symbolic";
+                    icon-size: large;
+                }
             }
 
             Gtk.Box {

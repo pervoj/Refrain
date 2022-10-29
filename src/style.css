@@ -36,16 +36,25 @@
     border-top: 1px solid @headerbar_shade_color;
 }
 
+.playback-controls .cover-button {
+    padding: 0;
+    border-radius: 0;
+}
+
 .playback-controls .cover {
     background-color: @card_bg_color;
+    border-radius: inherit;
 }
 
 .desktop .playback-controls {
     padding: 5px 10px;
 }
 
-.desktop .playback-controls .cover {
+.desktop .playback-controls .cover-button {
     border-radius: 6px;
+}
+
+.desktop .playback-controls .cover {
     min-width: 56px;
     min-height: 56px;
 }
