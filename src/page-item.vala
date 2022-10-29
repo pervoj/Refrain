@@ -18,7 +18,7 @@
 
 [GtkTemplate (ui = "/app/drey/Refrain/page-item.ui")]
 public class Refrain.PageItem : Gtk.Box {
-    public string name { get; construct; }
+    public string page_name { get; construct; }
 
     [GtkChild]
     private unowned Gtk.Image icon;
@@ -27,7 +27,7 @@ public class Refrain.PageItem : Gtk.Box {
     private unowned Gtk.Label title;
 
     public PageItem (string name, string title, string? icon = null) {
-        Object (name: name);
+        Object (page_name: name);
         this.title.label = title;
 
         if (icon == null) {

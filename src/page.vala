@@ -17,14 +17,14 @@
  */
 
 public class Refrain.Page : Adw.Bin {
-    public string name { get; construct; }
+    public string page_name { get; construct; }
     public string title { get; protected set; }
     public string? icon { get; protected set; }
     public PageItem menu_item { get; construct; }
 
     public Page (string name, string title, string? icon = null) {
         Object (
-            name: name,
+            page_name: name,
             title: title,
             icon: icon,
             menu_item: new PageItem (name, title, icon)

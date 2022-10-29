@@ -65,7 +65,7 @@ public class Refrain.Window : Adw.ApplicationWindow {
         // sidebar rows activate action
         sidebar_main.row_activated.connect ((row) => {
             sidebar_change_active (true);
-            stack.visible_child_name = ((PageItem) row.child).name;
+            stack.visible_child_name = ((PageItem) row.child).page_name;
         });
         sidebar_playlists.row_activated.connect ((row) => {
             sidebar_change_active (false);
@@ -80,7 +80,7 @@ public class Refrain.Window : Adw.ApplicationWindow {
     }
 
     private void add_page (Page page) {
-        stack.add_named (page, page.name);
+        stack.add_named (page, page.page_name);
         sidebar_main.append (page.menu_item);
     }
 
