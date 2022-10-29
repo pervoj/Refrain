@@ -55,16 +55,17 @@ template RefrainPlaybackControls : Adw.Bin {
                     label: "Title";
                 }
 
-                Gtk.Box author {
+                Gtk.Box {
                     styles ["caption"]
                     spacing: 3;
 
-                    Gtk.Label {
+                    Gtk.Label author {
                         label: "Author";
                     }
 
                     Gtk.Label {
                         label: "•";
+                        visible: bind album.visible;
                     }
 
                     Gtk.Label album {
