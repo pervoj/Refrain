@@ -71,6 +71,9 @@ public class Refrain.Window : Adw.ApplicationWindow {
             sidebar_change_active (false);
         });
 
+        // automatically switch to the first page
+        sidebar_main.select_row (sidebar_main.get_row_at_index (0));
+
         // adaptable window
         adapt ();
         notify["default-width"].connect (adapt);
