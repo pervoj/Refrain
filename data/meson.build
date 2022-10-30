@@ -56,7 +56,7 @@ if compile_schemas.found()
 endif
 
 
-install_data('colorthief.py',
+install_data('palette-getter.py',
   install_dir: join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
 )
 
