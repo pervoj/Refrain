@@ -98,5 +98,6 @@ data = io.BytesIO(bmap[1].data)
 color_thief = ColorThief(data)
 palette = color_thief.get_palette(2, 5)
 
-# print the palette
-print(palette)
+# generate CSS for the palette
+for num, color in enumerate(palette):
+    print(f"@define-color background_color_{num + 1} rgb({color[0]}, {color[1]}, {color[2]});")
