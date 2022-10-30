@@ -31,6 +31,7 @@
         "*.a"
     ],
     "modules" : [
+        "python3-colorthief.json",
         {
             "name" : "blueprint",
             "buildsystem" : "meson",
