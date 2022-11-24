@@ -1,0 +1,115 @@
+/* party-view.blp
+ *
+ * Copyright 2022 Vojtěch Perník
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+using Gtk 4.0;
+using Adw 1;
+
+template RefrainPartyView : Adw.Bin {
+    Gtk.WindowHandle {
+        Gtk.Box {
+            styles ["party", "gradient"]
+            orientation: vertical;
+
+            Adw.HeaderBar {
+                styles ["flat"]
+
+                [start]
+                Gtk.Button down_btn {
+                    icon-name: "go-down-symbolic";
+                }
+            }
+
+            Adw.Clamp {
+                maximum-size: 980;
+                tightening-threshold: 250;
+
+                Gtk.Box {
+                    styles ["content"]
+                    orientation: vertical;
+                    spacing: 12;
+                    valign: center;
+                    vexpand: true;
+
+                    Gtk.Box info_box {
+                        Gtk.Image cover {
+                            styles ["cover", "card"]
+                            halign: center;
+                            valign: center;
+                            vexpand: true;
+                            icon-name: "folder-music-symbolic";
+                            icon-size: large;
+                        }
+
+                        Gtk.Box {
+                            styles ["metadata"]
+                            orientation: vertical;
+                            spacing: 6;
+                            valign: center;
+                            vexpand: true;
+
+                            Gtk.Label title {
+                                styles ["title-2"]
+                                label: "Title";
+                                ellipsize: end;
+                            }
+
+                            Gtk.Box {
+                                orientation: vertical;
+                                spacing: 2;
+
+                                Gtk.Label author {
+                                    label: "Author";
+                                    ellipsize: end;
+                                }
+
+                                Gtk.Label album {
+                                    label: "Album";
+                                    ellipsize: end;
+                                }
+                            }
+                        }
+                    }
+
+                    Gtk.Box {
+                        styles ["caption"]
+
+                        Gtk.Label {
+                            label: "0:02";
+                        }
+
+                        Gtk.Scale scale {
+                            hexpand: true;
+                        }
+
+                        Gtk.Label {
+                            label: "0:05";
+                        }
+                    }
+
+                    Gtk.Box {
+                        halign: center;
+                        Gtk.Button {
+                            styles ["circular"]
+                            icon-name: "media-playback-start-symbolic";
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -30,6 +30,9 @@ public class Refrain.PlaybackControls : Adw.Bin {
     [GtkChild]
     private unowned Gtk.Scale scale;
 
+    [GtkChild]
+    private unowned Gtk.Button cover_button;
+
     construct {
         scale.adjustment.upper = 5;
         scale.adjustment.value = 2;
@@ -45,17 +48,32 @@ public class Refrain.PlaybackControls : Adw.Bin {
                 to.set_double (scale.adjustment.upper * from.get_double ());
             }
         );
+
+        // connect cover button click action
+        cover_button.clicked.connect (() => {
+            cover_button_clicked ();
+        });
     }
 
-    public void adapt_desktop () {
-        progress_bar.visible = false;
-        desktop_controls.visible = true;
-        mobile_controls.visible = false;
+    public signal void cover_button_clicked ();
+
+    public Gtk.Adjustment get_scale_adjustment () {
+        return scale.adjustment;
     }
 
-    public void adapt_mobile () {
-        progress_bar.visible = true;
-        desktop_controls.visible = false;
-        mobile_controls.visible = true;
+    public void adapt (int width) {
+        remove_css_class ("mobile");
+        remove_css_class ("desktop");
+        if (width < 420) {
+            add_css_class ("mobile");
+            progress_bar.visible = true;
+            desktop_controls.visible = false;
+            mobile_controls.visible = true;
+        } else {
+            add_css_class ("desktop");
+            progress_bar.visible = false;
+            desktop_controls.visible = true;
+            mobile_controls.visible = false;
+        }
     }
 }

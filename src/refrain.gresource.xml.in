@@ -5,6 +5,7 @@
     <file>playback-controls.ui</file>
     <file>page-item.ui</file>
     <file>queue-page.ui</file>
+    <file>party-view.ui</file>
     <file>style.css</file>
   </gresource>
   <gresource prefix="@RESOURCE_PATH@">

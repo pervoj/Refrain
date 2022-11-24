@@ -5,6 +5,7 @@ sources = [
   'page.vala',
   'page-item.vala',
   'queue-page.vala',
+  'party-view.vala',
   'db.vala',
   'file-lister.vala',
 ]
@@ -15,6 +16,7 @@ blueprints_src = [
   'playback-controls.blp',
   'page-item.blp',
   'queue-page.blp',
+  'party-view.blp',
 ]
 
 

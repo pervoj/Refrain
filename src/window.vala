@@ -21,6 +21,9 @@ public class Refrain.Window : Adw.ApplicationWindow {
     public string content_title { get; private set; }
 
     [GtkChild]
+    private unowned Adw.Leaflet controls_leaflet;
+
+    [GtkChild]
     private unowned Adw.Leaflet main_leaflet;
 
     [GtkChild]
@@ -37,6 +40,9 @@ public class Refrain.Window : Adw.ApplicationWindow {
 
     [GtkChild]
     private unowned PlaybackControls playback_controls;
+
+    [GtkChild]
+    private unowned PartyView party_view;
 
     public Window (Gtk.Application app) {
         Object (application: app);
@@ -77,6 +83,15 @@ public class Refrain.Window : Adw.ApplicationWindow {
         // adaptable window
         adapt ();
         notify["default-width"].connect (adapt);
+
+        playback_controls.cover_button_clicked.connect (() => {
+            controls_leaflet.navigate (Adw.NavigationDirection.FORWARD);
+        });
+        party_view.down.connect (() => {
+            controls_leaflet.navigate (Adw.NavigationDirection.BACK);
+        });
+
+        party_view.set_scale_adjustment (playback_controls.get_scale_adjustment ());
     }
 
     private void add_page (Page page) {
@@ -94,14 +109,7 @@ public class Refrain.Window : Adw.ApplicationWindow {
     }
 
     private void adapt () {
-        if (default_width < 420) {
-            remove_css_class ("desktop");
-            add_css_class ("mobile");
-            playback_controls.adapt_mobile ();
-        } else {
-            add_css_class ("desktop");
-            remove_css_class ("mobile");
-            playback_controls.adapt_desktop ();
-        }
+        playback_controls.adapt (default_width);
+        party_view.adapt (default_width);
     }
 }
