@@ -89,7 +89,6 @@
 
 .party .content {
     padding: 24px;
-    max-width: 200px;
 }
 
 .party:not(.wide) .cover {
