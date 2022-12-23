@@ -1,25 +1,129 @@
+/* window.blp
+ *
+ * Copyright 2022 Vojtěch Perník
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 using Gtk 4.0;
+using Adw 1;
 
-template RefrainWindow : Gtk.ApplicationWindow {
-  default-width: 600;
-  default-height: 300;
+template RefrainWindow : Adw.ApplicationWindow {
+    title: _("Refrain");
+    default-width: 980;
+    default-height: 640;
 
-  [titlebar]
-  Gtk.HeaderBar {
-    [end]
-    Gtk.MenuButton {
-      icon-name: "open-menu-symbolic";
-      menu-model: main_menu;
+    Adw.ToastOverlay {
+        Adw.Leaflet controls_leaflet {
+            orientation: vertical;
+            can-unfold: false;
+            transition-type: over;
+
+            Gtk.Box {
+                orientation: vertical;
+
+                Adw.Leaflet main_leaflet {
+                    vexpand: true;
+                    fold-threshold-policy: natural;
+
+                    Gtk.Box {
+                        orientation: vertical;
+
+                        Adw.HeaderBar {
+                            show-end-title-buttons: bind main_leaflet.folded;
+
+                            [end]
+                            Gtk.MenuButton {
+                                icon-name: "open-menu-symbolic";
+                                menu-model: main_menu;
+                            }
+                        }
+                        Gtk.ScrolledWindow {
+                            vexpand: true;
+                            hscrollbar-policy: never;
+
+                            Gtk.Box {
+                                styles ["app-sidebar"]
+                                orientation: vertical;
+
+                                Gtk.ListBox sidebar_main {
+                                    styles ["navigation-sidebar"]
+                                }
+                                Gtk.Separator {
+                                    visible: bind sidebar_playlists.visible;
+                                }
+                                Gtk.ListBox sidebar_playlists {
+                                    styles ["navigation-sidebar"]
+
+                                    Gtk.Box {
+                                        spacing: 5;
+
+                                        Gtk.Image {
+                                            icon-name: "folder-music-symbolic";
+                                        }
+                                        Gtk.Label {
+                                            hexpand: true;
+                                            halign: start;
+                                            ellipsize: end;
+                                            label: "adasdasd";
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Adw.LeafletPage {
+                        navigatable: false;
+                        child: Gtk.Separator {};
+                    }
+                    Gtk.Box {
+                        orientation: vertical;
+                        hexpand: true;
+
+                        Adw.HeaderBar {
+                            hexpand: true;
+                            show-start-title-buttons: bind main_leaflet.folded;
+
+                            [title]
+                            Adw.WindowTitle {
+                                title: bind RefrainWindow.content-title;
+                            }
+
+                            [start]
+                            Gtk.Button navigate_back {
+                                icon-name: "go-previous-symbolic";
+                                visible: bind main_leaflet.folded;
+                            }
+                        }
+                        Gtk.ScrolledWindow {
+                            vexpand: true;
+
+                            Gtk.Stack stack {
+                                styles ["content-stack"]
+                            }
+                        }
+                    }
+                }
+                .RefrainPlaybackControls playback_controls {}
+            }
+            .RefrainPartyView party_view {}
+        }
     }
-  }
-
-  Gtk.Label label {
-    label: "Hello, World!";
-  }
 }
 
 menu main_menu {
-  item (_("_Preferences"), "app.preferences")
-  item (_("_Keyboard Shortcuts"), "win.show-help-overlay")
-  item (_("_About refrain"), "app.about")
+    item (_("_Preferences"), "app.preferences")
+    item (_("_Keyboard Shortcuts"), "win.show-help-overlay")
+    item (_("_About Refrain"), "app.about")
 }

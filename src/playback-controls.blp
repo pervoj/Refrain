@@ -1,0 +1,130 @@
+/* playback-controls.blp
+ *
+ * Copyright 2022 Vojtěch Perník
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+using Gtk 4.0;
+using Adw 1;
+
+template RefrainPlaybackControls : Adw.Bin {
+    Gtk.Overlay {
+        [overlay]
+        Gtk.ProgressBar progress_bar {
+            styles ["osd"]
+            valign: start;
+        }
+
+        Gtk.Box {
+            styles ["playback-controls"]
+            spacing: 5;
+
+            Gtk.Button cover_button {
+                styles ["cover-button"]
+                has-frame: false;
+                valign: center;
+
+                Gtk.Image {
+                    styles ["cover"]
+                    valign: center;
+                    icon-name: "folder-music-symbolic";
+                    icon-size: large;
+                }
+            }
+
+            Gtk.Box {
+                styles ["metadata"]
+                orientation: vertical;
+                valign: center;
+
+                Gtk.Label title {
+                    styles ["heading"]
+                    halign: start;
+                    label: "Title";
+                }
+
+                Gtk.Box {
+                    styles ["caption"]
+                    spacing: 3;
+
+                    Gtk.Label author {
+                        label: "Author";
+                    }
+
+                    Gtk.Label {
+                        label: "•";
+                        visible: bind album.visible;
+                    }
+
+                    Gtk.Label album {
+                        label: "Album";
+                    }
+                }
+            }
+
+            Gtk.Box desktop_controls {
+                orientation: vertical;
+
+                Gtk.Box {
+                    halign: center;
+                    Gtk.Button {
+                        styles ["circular"]
+                        icon-name: "media-playback-start-symbolic";
+                    }
+                }
+
+                Adw.Clamp {
+                    tightening-threshold: 300;
+                    maximum-size: 600;
+
+                    Gtk.Box {
+                        styles ["caption"]
+
+                        Gtk.Label {
+                            label: "0:02";
+                        }
+
+                        Gtk.Scale scale {
+                            hexpand: true;
+                            adjustment: Gtk.Adjustment {
+                                value: 0;
+                                lower: 0;
+                                upper: 60;
+                                step-increment: 1;
+                                page-increment: 5;
+                            };
+                        }
+
+                        Gtk.Label {
+                            label: "0:05";
+                        }
+                    }
+                }
+            }
+
+            Gtk.Box mobile_controls {
+                styles ["mobile-controls"]
+                hexpand: true;
+                halign: end;
+                valign: center;
+
+                Gtk.Button {
+                    styles ["circular", "flat"]
+                    icon-name: "media-playback-start-symbolic";
+                }
+            }
+        }
+    }
+}

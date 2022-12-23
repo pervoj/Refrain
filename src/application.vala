@@ -35,7 +35,16 @@ public class Refrain.Application : Adw.Application {
     }
 
     public override void activate () {
+        this.resource_base_path = Constants.RESOURCE_PATH_PREFIX;
         base.activate ();
+
+        Gdk.Display? display = Gdk.Display.get_default ();
+        assert (display != null);
+
+        var css_provider = new Gtk.CssProvider ();
+        css_provider.load_from_resource (Constants.RESOURCE_PATH_PREFIX + "/style.css");
+        Gtk.StyleContext.add_provider_for_display (display, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+
         var win = this.active_window;
         if (win == null) {
             win = new Refrain.Window (this);
