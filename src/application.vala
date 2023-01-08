@@ -60,6 +60,12 @@ public class Refrain.Application : Adw.Application {
         Intl.bind_textdomain_codeset (Constants.GETTEXT_PACKAGE, "UTF-8");
         Intl.textdomain (Constants.GETTEXT_PACKAGE);
 
+        try {
+            Audio.DB.get_default ().init ();
+        } catch (Audio.DBError e) {
+            error ("Failed to load the database: %s\n", e.message);
+        }
+
         var app = new Application ();
         return app.run (args);
     }

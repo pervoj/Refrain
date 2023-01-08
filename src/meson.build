@@ -6,8 +6,11 @@ sources = [
   'page-item.vala',
   'queue-page.vala',
   'party-view.vala',
-  'db.vala',
   'file-lister.vala',
+  'audio/db.vala',
+  'audio/author.vala',
+  'audio/album.vala',
+  'audio/song.vala',
 ]
 
 

@@ -30,6 +30,22 @@ public class Refrain.FileLister : Object {
         return found_files.data;
     }
 
+    public static FileLister from_settings () throws Error {
+        var settings = new Settings (Constants.APP_ID);
+        var directories = settings.get_strv ("directories");
+        if (directories.length <= 0) {
+            directories = { Environment.get_user_special_dir (UserDirectory.MUSIC) };
+            settings.set_strv ("directories", directories);
+        }
+
+        File[] directories_file = {};
+        foreach (string dir in directories) {
+            directories_file += File.new_for_path (dir);
+        }
+
+        return new FileLister (directories_file);
+    }
+
     public FileLister (File[] search_dirs) throws Error {
         // run through all the search dirs
         foreach (File dir in search_dirs) {
@@ -45,6 +61,11 @@ public class Refrain.FileLister : Object {
 
             // add the dir to the list
             dirs_to_list.append_val (dir);
+        }
+
+        if (dirs_to_list.length <= 0) {
+            var path = Environment.get_user_special_dir (UserDirectory.MUSIC);
+            dirs_to_list.append_val (File.new_for_path (path));
         }
 
         // until the directory list is empty
