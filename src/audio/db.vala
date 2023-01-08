@@ -45,8 +45,7 @@ public class Refrain.Audio.DB : Object {
      */
     public void init (bool reinit = false) throws DBError {
         // DB file path
-        // var db_file = File.new_build_filename (Constants.DATA_DIR, FILE_NAME);
-        var db_file = File.new_build_filename ("/home/pervoj/Temp", FILE_NAME);
+        var db_file = File.new_build_filename (Constants.DATA_DIR, FILE_NAME);
 
         if (!db_file.query_exists ()) {
             throw new DBError.INITIALIZATION_FAILED ("%s doesn't exist", db_file.get_path ());
