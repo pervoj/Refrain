@@ -21,6 +21,9 @@ public class Refrain.Window : Adw.ApplicationWindow {
     public string content_title { get; private set; }
 
     [GtkChild]
+    private unowned Adw.ToastOverlay toast_overlay;
+
+    [GtkChild]
     private unowned Adw.Leaflet controls_leaflet;
 
     [GtkChild]
@@ -52,6 +55,15 @@ public class Refrain.Window : Adw.ApplicationWindow {
         #if DEVEL
             add_css_class ("devel");
         #endif
+
+        var scan_action = new SimpleAction ("scan-library", null);
+        this.add_action (scan_action);
+        scan_action.activate.connect (() => {
+            toast_overlay.add_toast (new Adw.Toast (_("Scan is starting…")));
+            Audio.DB.get_default ().scan_dirs_async (() => {
+                toast_overlay.add_toast (new Adw.Toast ("Scan is complete!"));
+            });
+        });
 
         // navigate back button
         navigate_back.clicked.connect (() => {

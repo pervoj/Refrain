@@ -24,7 +24,7 @@ template RefrainWindow : Adw.ApplicationWindow {
     default-width: 980;
     default-height: 640;
 
-    Adw.ToastOverlay {
+    Adw.ToastOverlay toast_overlay {
         Adw.Leaflet controls_leaflet {
             orientation: vertical;
             can-unfold: false;
@@ -123,7 +123,9 @@ template RefrainWindow : Adw.ApplicationWindow {
 }
 
 menu main_menu {
+    item (_("_Scan library"), "win.scan-library")
     item (_("_Preferences"), "app.preferences")
     item (_("_Keyboard Shortcuts"), "win.show-help-overlay")
     item (_("_About Refrain"), "app.about")
 }
+
