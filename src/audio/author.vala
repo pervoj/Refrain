@@ -20,6 +20,30 @@ public class Refrain.Audio.Author : Object {
     public string id { get; construct; }
     public string name { get; construct; }
 
+    public static Author insert (string name) throws DBError {
+        unowned var db = DB.get_default ().get_db ();
+        string query = """
+            INSERT
+            INTO author (name)
+            VALUES (?)
+        """;
+
+        Sqlite.Statement stmt;
+        int result = db.prepare_v2 (query, -1, out stmt);
+        if (result != Sqlite.OK) {
+            throw new DBError.PREPARATION_FAILED ("%d", result);
+        }
+
+        result = stmt.bind_text (1, name);
+        if (result != Sqlite.OK) {
+            throw new DBError.PROPERTIES_BINDING_FAILED ("%d", result);
+        }
+
+        stmt.step ();
+
+        return new Author.from_name (name);
+    }
+
     public Author (string id) throws DBError {
         unowned var db = DB.get_default ().get_db ();
         string query = "SELECT * FROM author WHERE id = ?";
@@ -60,6 +84,49 @@ public class Refrain.Audio.Author : Object {
         Object (
             id: author_id,
             name: name
+        );
+    }
+
+    public Author.from_name (string name) throws DBError {
+        unowned var db = DB.get_default ().get_db ();
+        string query = "SELECT * FROM author WHERE name = ?";
+
+        Sqlite.Statement stmt;
+        int result = db.prepare_v2 (query, -1, out stmt);
+        if (result != Sqlite.OK) {
+            throw new DBError.PREPARATION_FAILED ("%d", result);
+        }
+
+        result = stmt.bind_text (1, name);
+        if (result != Sqlite.OK) {
+            throw new DBError.PROPERTIES_BINDING_FAILED ("%d", result);
+        }
+
+        string id = "";
+        string author_name = "";
+
+        int cols = stmt.column_count ();
+        while (stmt.step () == Sqlite.ROW) {
+            for (int i = 0; i < cols; i++) {
+                string col_name = stmt.column_name (i) ?? "<none>";
+                switch (col_name) {
+                    case "id":
+                        id = stmt.column_text (i) ?? "";
+                        break;
+                    case "name":
+                        author_name = stmt.column_text (i) ?? "";
+                        break;
+                }
+            }
+        }
+
+        if (id == "") {
+            throw new DBError.NOT_FOUND ("author %s not found", id);
+        }
+
+        Object (
+            id: id,
+            name: author_name
         );
     }
 

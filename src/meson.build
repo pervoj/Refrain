@@ -29,6 +29,7 @@ dependencies = [
   dependency('sqlite3', version: '>= 3.36'),
   dependency('gstreamer-1.0', version: '>= 1.20'),
   dependency('gstreamer-pbutils-1.0', version: '>= 1.20'),
+  dependency('gstreamer-tag-1.0', version: '>= 1.20'),
 ]
 
 

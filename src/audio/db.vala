@@ -45,7 +45,8 @@ public class Refrain.Audio.DB : Object {
      */
     public void init (bool reinit = false) throws DBError {
         // DB file path
-        var db_file = File.new_build_filename (Constants.DATA_DIR, FILE_NAME);
+        // var db_file = File.new_build_filename (Constants.DATA_DIR, FILE_NAME);
+        var db_file = File.new_for_path ("/home/pervoj/Temp/db.sqlite3");
 
         if (!db_file.query_exists ()) {
             throw new DBError.INITIALIZATION_FAILED ("%s doesn't exist", db_file.get_path ());
@@ -66,11 +67,13 @@ public class Refrain.Audio.DB : Object {
      * scan directories and load the files into database
      */
     public bool scan_dirs () {
+        int result = db.exec ("DELETE FROM song");
+        if (result != Sqlite.OK) return false;
 
-        int result;
-        Sqlite.Statement stmt;
+        result = db.exec ("DELETE FROM album");
+        if (result != Sqlite.OK) return false;
 
-        result = db.exec ("DELETE FROM song");
+        result = db.exec ("DELETE FROM author");
         if (result != Sqlite.OK) return false;
 
         File[] files;
@@ -81,25 +84,11 @@ public class Refrain.Audio.DB : Object {
         }
 
         foreach (var file in files) {
-            string query = """
-                INSERT
-                INTO song (path, name, album)
-                VALUES (?, ?, ?)
-            """;
-
-            result = db.prepare_v2 (query, -1, out stmt);
-            if (result != Sqlite.OK) return false;
-
-            result = stmt.bind_text (1, file.get_path ());
-            if (result != Sqlite.OK) return false;
-
-            result = stmt.bind_text (2, "test name");
-            if (result != Sqlite.OK) return false;
-
-            result = stmt.bind_int (3, 1);
-            if (result != Sqlite.OK) return false;
-
-            stmt.step ();
+            try {
+                insert_song_from_file (file);
+            } catch {
+                return false;
+            }
         }
 
         return true;
@@ -109,5 +98,119 @@ public class Refrain.Audio.DB : Object {
         new Thread<void> ("refrain_audio_db_scan_dirs_async", () => {
             cb (scan_dirs ());
         });
+    }
+
+    private Gst.PbUtils.Discoverer discoverer;
+    public Song insert_song_from_file (File file) throws Error, DBError {
+        if (discoverer == null) {
+            discoverer = new Gst.PbUtils.Discoverer ((Gst.ClockTime) (5 * Gst.SECOND));
+        }
+
+        // discover the file
+        var info = discoverer.discover_uri (file.get_uri ());
+        var sinfo = info.get_audio_streams ().nth_data (0);
+        var tags = sinfo.get_tags ();
+
+        // prepare variables
+        string _title;
+        string _author;
+        string _album;
+        int _track;
+        Bytes? _cover = null;
+
+        // get title
+        tags.get_string (Gst.Tags.TITLE, out _title);
+        if (_title == null) {
+            _title = "";
+        }
+
+        // get author
+        tags.get_string (Gst.Tags.ARTIST, out _author);
+        if (_author == null) {
+            _author = "";
+        }
+
+        // get album
+        tags.get_string (Gst.Tags.ALBUM, out _album);
+        if (_album == null) {
+            _album = "";
+        }
+
+        // get track number
+        uint _track_num;
+        if (tags.get_uint (Gst.Tags.TRACK_NUMBER, out _track_num)) {
+            _track = (int) _track_num;
+        } else {
+            _track = -1;
+        }
+
+        // get cover
+        var sample = get_cover_sample (tags);
+        if (sample != null) {
+            var buffer = sample.get_buffer ();
+            if (buffer != null) {
+                _cover = get_image_bytes_from_buffer (buffer);
+            }
+        }
+
+        // get author instance
+        Author author;
+        try {
+            author = new Author.from_name (_author);
+        } catch {
+            author = Author.insert (_author);
+        }
+
+        // get album instance
+        Album album;
+        try {
+            album = new Album.from_name (author, _album);
+        } catch {
+            album = Album.insert (author, _album, _cover);
+        }
+
+        // get song instance
+        Song song;
+        try {
+            song = new Song.from_file (file);
+        } catch {
+            song = Song.insert (album, file, _title, _track);
+        }
+
+        return song;
+    }
+
+    // credits: Music by elementary OS
+    private Gst.Sample? get_cover_sample (Gst.TagList tag_list) {
+        Gst.Sample cover_sample = null;
+        Gst.Sample sample;
+        for (int i = 0; tag_list.get_sample_index (Gst.Tags.IMAGE, i, out sample); i++) {
+            var caps = sample.get_caps ();
+            unowned Gst.Structure caps_struct = caps.get_structure (0);
+            int image_type = Gst.Tag.ImageType.UNDEFINED;
+            caps_struct.get_enum ("image-type", typeof (Gst.Tag.ImageType), out image_type);
+            if (image_type == Gst.Tag.ImageType.UNDEFINED && cover_sample == null) {
+                cover_sample = sample;
+            } else if (image_type == Gst.Tag.ImageType.FRONT_COVER) {
+                return sample;
+            }
+        }
+
+        return cover_sample;
+    }
+
+    private Bytes? get_image_bytes_from_buffer (Gst.Buffer buffer) {
+        Gst.MapInfo map_info;
+
+        if (!buffer.map (out map_info, Gst.MapFlags.READ)) {
+            warning ("Could not map memory buffer");
+            return null;
+        }
+
+        Bytes bytes = new Bytes (map_info.data);
+
+        buffer.unmap (map_info);
+
+        return bytes;
     }
 }
