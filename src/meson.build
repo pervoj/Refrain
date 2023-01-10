@@ -26,7 +26,9 @@ blueprints_src = [
 dependencies = [
   dependency('libadwaita-1', version: '>= 1.0'),
   dependency('gio-2.0', version: '>= 2.72'),
-  dependency('sqlite3', version: '>= 3.36.0'),
+  dependency('sqlite3', version: '>= 3.36'),
+  dependency('gstreamer-1.0', version: '>= 1.20'),
+  dependency('gstreamer-pbutils-1.0', version: '>= 1.20'),
 ]
 
 
