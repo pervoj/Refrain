@@ -60,6 +60,8 @@ public class Refrain.Application : Adw.Application {
         Intl.bind_textdomain_codeset (Constants.GETTEXT_PACKAGE, "UTF-8");
         Intl.textdomain (Constants.GETTEXT_PACKAGE);
 
+        Gst.init (ref args);
+
         try {
             Audio.DB.get_default ().init ();
         } catch (Audio.DBError e) {
