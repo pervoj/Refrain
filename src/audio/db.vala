@@ -120,6 +120,7 @@ public class Refrain.Audio.DB : Object {
         string _album;
         int _track;
         Bytes? _cover = null;
+        string? _css = null;
 
         // get title
         tags.get_string (Gst.Tags.TITLE, out _title);
@@ -147,15 +148,6 @@ public class Refrain.Audio.DB : Object {
             _track = -1;
         }
 
-        // get cover
-        var sample = get_cover_sample (tags);
-        if (sample != null) {
-            var buffer = sample.get_buffer ();
-            if (buffer != null) {
-                _cover = get_image_bytes_from_buffer (buffer);
-            }
-        }
-
         // get author instance
         Author author;
         try {
@@ -169,7 +161,35 @@ public class Refrain.Audio.DB : Object {
         try {
             album = new Album.from_name (author, _album);
         } catch {
-            album = Album.insert (author, _album, _cover);
+            // get cover
+            var sample = get_cover_sample (tags);
+            if (sample != null) {
+                var buffer = sample.get_buffer ();
+                if (buffer != null) {
+                    _cover = get_image_bytes_from_buffer (buffer);
+                }
+            }
+
+            if (_cover != null) {
+                // get cover colors css
+                var ct = new Subprocess.newv (
+                    {
+                        "python",
+                        Path.build_filename (Constants.DATA_DIR, "palette-getter.py"),
+                        file.get_path ()
+                    },
+                    SubprocessFlags.STDOUT_PIPE
+                );
+                var dis = new DataInputStream (ct.get_stdout_pipe ());
+                string _s_css = "";
+                string _s;
+                while ((_s = dis.read_line ()) != null) {
+                    _s_css += _s + "\n";
+                }
+                if (_s_css != "") _css = _s_css;
+            }
+
+            album = Album.insert (author, _album, _cover, _css);
         }
 
         // get song instance

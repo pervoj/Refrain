@@ -20,17 +20,20 @@ public class Refrain.Audio.Album : Object {
     public string id { get; construct; }
     public string name { get; construct; }
     public Bytes? cover { get; construct; }
+    public string? css { get; construct; }
 
-    public static Album insert (Author author, string name, Bytes? cover) throws DBError {
+    public static Album insert (
+        Author author, string name, Bytes? cover, string? css
+    ) throws DBError {
         unowned var db = DB.get_default ().get_db ();
         // compose the query
         string query = """
             INSERT
             INTO album (author, name""";
-        if (cover != null) query += ", cover";
+        if (cover != null) query += ", cover, css";
         query += """)
             VALUES (?, ?""";
-        if (cover != null) query += ", ?";
+        if (cover != null) query += ", ?, ?";
         query += ")";
 
         Sqlite.Statement stmt;
@@ -51,6 +54,11 @@ public class Refrain.Audio.Album : Object {
 
         if (cover != null) {
             result = stmt.bind_blob (3, Bytes.unref_to_data (cover), cover.length);
+            if (result != Sqlite.OK) {
+                throw new DBError.PROPERTIES_BINDING_FAILED ("%d", result);
+            }
+
+            result = stmt.bind_text (4, css ?? "");
             if (result != Sqlite.OK) {
                 throw new DBError.PROPERTIES_BINDING_FAILED ("%d", result);
             }
@@ -79,6 +87,7 @@ public class Refrain.Audio.Album : Object {
         string album_id = "";
         string name = "";
         Bytes? cover = null;
+        string? css = null;
 
         int cols = stmt.column_count ();
         while (stmt.step () == Sqlite.ROW) {
@@ -96,6 +105,9 @@ public class Refrain.Audio.Album : Object {
                         data.length = stmt.column_bytes (i);
                         cover = new Bytes (data);
                         break;
+                    case "css":
+                        css = stmt.column_text (i);
+                        break;
                 }
             }
         }
@@ -107,7 +119,8 @@ public class Refrain.Audio.Album : Object {
         Object (
             id: album_id,
             name: name,
-            cover: cover
+            cover: cover,
+            css: css
         );
     }
 
@@ -134,6 +147,7 @@ public class Refrain.Audio.Album : Object {
         string id = "";
         string album_name = "";
         Bytes? cover = null;
+        string? css = null;
 
         int cols = stmt.column_count ();
         while (stmt.step () == Sqlite.ROW) {
@@ -151,6 +165,9 @@ public class Refrain.Audio.Album : Object {
                         data.length = stmt.column_bytes (i);
                         cover = new Bytes (data);
                         break;
+                    case "css":
+                        css = stmt.column_text (i);
+                        break;
                 }
             }
         }
@@ -162,7 +179,8 @@ public class Refrain.Audio.Album : Object {
         Object (
             id: id,
             name: album_name,
-            cover: cover
+            cover: cover,
+            css: css
         );
     }
 
