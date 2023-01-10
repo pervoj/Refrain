@@ -82,9 +82,12 @@ public class Refrain.Audio.DB : Object {
             return false;
         }
 
-        foreach (var file in files) {
+        scan_dirs_status (0, files.length);
+
+        for (int i = 0; i < files.length; i++) {
             try {
-                insert_song_from_file (file);
+                insert_song_from_file (files[i]);
+                scan_dirs_status (i + 1, files.length);
             } catch {
                 return false;
             }
@@ -98,6 +101,7 @@ public class Refrain.Audio.DB : Object {
             cb (scan_dirs ());
         });
     }
+    public signal void scan_dirs_status (int loaded, int total);
 
     private Gst.PbUtils.Discoverer discoverer;
     public Song insert_song_from_file (File file) throws Error, DBError {
