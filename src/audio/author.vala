@@ -171,12 +171,25 @@ public class Refrain.Audio.Author : Object {
 
         return authors;
     }
+    public delegate void ListCB (Author[] res, DBError? err);
+    public static void list_async (ListCB cb) {
+        new Thread<void> ("refrain_audio_author_list_async", () => {
+            Author[] res = {};
+            DBError? err = null;
+            try {
+                res = list ();
+            } catch (DBError e) {
+                err = e;
+            }
+            cb (res, err);
+        });
+    }
 
     public Album[] get_albums () throws DBError {
         Album[] albums = {};
 
         unowned var db = DB.get_default ().get_db ();
-        string query = "SELECT * FROM album WHERE author = ? ORDER BY name ASC";
+        string query = "SELECT id FROM album WHERE author = ? ORDER BY name ASC";
 
         Sqlite.Statement stmt;
         int result = db.prepare_v2 (query, -1, out stmt);
@@ -192,21 +205,17 @@ public class Refrain.Audio.Author : Object {
         int cols = stmt.column_count ();
         while (stmt.step () == Sqlite.ROW) {
             string id = "";
-            string name = "";
             for (int i = 0; i < cols; i++) {
                 string col_name = stmt.column_name (i) ?? "<none>";
                 switch (col_name) {
                     case "id":
                         id = stmt.column_text (i) ?? "";
                         break;
-                    case "name":
-                        name = stmt.column_text (i) ?? "";
-                        break;
                 }
             }
             if (id == "") continue;
 
-            albums += new Album.create (id, name);
+            albums += new Album (id);
         }
 
         return albums;
@@ -249,4 +258,5 @@ public class Refrain.Audio.Author : Object {
             cb (res, err);
         });
     }
+
 }

@@ -18,6 +18,7 @@
 
 public class Refrain.Audio.Album : Object {
     public string id { get; construct; }
+    public string author_id { get; construct; }
     public string name { get; construct; }
     public Bytes? cover { get; construct; }
     public string? css { get; construct; }
@@ -85,6 +86,7 @@ public class Refrain.Audio.Album : Object {
         }
 
         string album_id = "";
+        string author_id = "";
         string name = "";
         Bytes? cover = null;
         string? css = null;
@@ -96,6 +98,9 @@ public class Refrain.Audio.Album : Object {
                 switch (col_name) {
                     case "id":
                         album_id = stmt.column_text (i) ?? "";
+                        break;
+                    case "author":
+                        author_id = stmt.column_text (i) ?? "";
                         break;
                     case "name":
                         name = stmt.column_text (i) ?? "";
@@ -118,6 +123,7 @@ public class Refrain.Audio.Album : Object {
 
         Object (
             id: album_id,
+            author_id: author_id,
             name: name,
             cover: cover,
             css: css
@@ -178,17 +184,26 @@ public class Refrain.Audio.Album : Object {
 
         Object (
             id: id,
+            author_id: author.id,
             name: album_name,
             cover: cover,
             css: css
         );
     }
 
-    public Album.create (string id, string name, Bytes? cover = null) {
+    public Album.create (
+        string id,
+        string author_id,
+        string name,
+        Bytes? cover = null,
+        string? css = null
+    ) {
         Object (
             id: id,
+            author_id: author_id,
             name: name,
-            cover: cover
+            cover: cover,
+            css: css
         );
     }
 
@@ -196,7 +211,7 @@ public class Refrain.Audio.Album : Object {
         Song[] songs = {};
 
         unowned var db = DB.get_default ().get_db ();
-        string query = "SELECT * FROM song WHERE album = ? ORDER BY track ASC";
+        string query = "SELECT id FROM song WHERE album = ? ORDER BY track ASC";
 
         Sqlite.Statement stmt;
         int result = db.prepare_v2 (query, -1, out stmt);
@@ -212,32 +227,17 @@ public class Refrain.Audio.Album : Object {
         int cols = stmt.column_count ();
         while (stmt.step () == Sqlite.ROW) {
             string id = "";
-            string path = "";
-            string name = "";
-            int track = -1;
             for (int i = 0; i < cols; i++) {
                 string col_name = stmt.column_name (i) ?? "<none>";
                 switch (col_name) {
                     case "id":
                         id = stmt.column_text (i) ?? "";
                         break;
-                    case "path":
-                        path = stmt.column_text (i) ?? "";
-                        break;
-                    case "name":
-                        name = stmt.column_text (i) ?? "";
-                        break;
-                    case "track":
-                        string? val = stmt.column_text (i);
-                        if (val != null && val.length > 0) {
-                            track = int.parse (val);
-                        }
-                        break;
                 }
             }
             if (id == "") continue;
 
-            songs += new Song.create (id, path, name, track);
+            songs += new Song (id);
         }
 
         return songs;

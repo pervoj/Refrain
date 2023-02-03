@@ -18,6 +18,7 @@
 
 public class Refrain.Audio.Song : Object {
     public string id { get; construct; }
+    public string album_id { get; construct; }
     public string path { get; construct; }
     public string name { get; construct; }
     public int track { get; construct; }
@@ -77,6 +78,7 @@ public class Refrain.Audio.Song : Object {
         }
 
         string song_id = "";
+        string album_id = "";
         string path = "";
         string name = "";
         int track = -1;
@@ -88,6 +90,9 @@ public class Refrain.Audio.Song : Object {
                 switch (col_name) {
                     case "id":
                         song_id = stmt.column_text (i) ?? "";
+                        break;
+                    case "album":
+                        album_id = stmt.column_text (i) ?? "";
                         break;
                     case "path":
                         path = stmt.column_text (i) ?? "";
@@ -111,6 +116,7 @@ public class Refrain.Audio.Song : Object {
 
         Object (
             id: song_id,
+            album_id: album_id,
             path: path,
             name: name,
             track: track
@@ -133,6 +139,7 @@ public class Refrain.Audio.Song : Object {
         }
 
         string song_id = "";
+        string album_id = "";
         string path = "";
         string name = "";
         int track = -1;
@@ -144,6 +151,9 @@ public class Refrain.Audio.Song : Object {
                 switch (col_name) {
                     case "id":
                         song_id = stmt.column_text (i) ?? "";
+                        break;
+                    case "album":
+                        album_id = stmt.column_text (i) ?? "";
                         break;
                     case "path":
                         path = stmt.column_text (i) ?? "";
@@ -167,15 +177,19 @@ public class Refrain.Audio.Song : Object {
 
         Object (
             id: song_id,
+            album_id: album_id,
             path: path,
             name: name,
             track: track
         );
     }
 
-    public Song.create (string id, string path, string name, int track) {
+    public Song.create (
+        string id, string album_id, string path, string name, int track
+    ) {
         Object (
             id: id,
+            album_id: album_id,
             path: path,
             name: name,
             track: track
