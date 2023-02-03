@@ -77,7 +77,7 @@ public class Refrain.Window : Adw.ApplicationWindow {
 
         // add pages
         add_page (new QueuePage ());
-        add_page (new Page ("interprets", "Interprets", "avatar-default-symbolic"));
+        add_page (new AuthorsPage ());
         add_page (new Page ("albums", "Albums", "media-optical-cd-audio-symbolic"));
 
         // sidebar rows activate action

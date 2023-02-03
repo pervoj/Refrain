@@ -4,8 +4,10 @@ sources = [
   'playback-controls.vala',
   'page.vala',
   'page-item.vala',
+  'authors-page.vala',
   'queue-page.vala',
   'party-view.vala',
+  'library-item.vala',
   'file-lister.vala',
   'audio/db.vala',
   'audio/author.vala',
@@ -18,8 +20,10 @@ blueprints_src = [
   'window.blp',
   'playback-controls.blp',
   'page-item.blp',
+  'authors-page.blp',
   'queue-page.blp',
   'party-view.blp',
+  'library-item.blp',
 ]
 
 

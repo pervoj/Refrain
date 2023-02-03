@@ -106,12 +106,11 @@ template RefrainWindow : Adw.ApplicationWindow {
                                 visible: bind main_leaflet.folded;
                             }
                         }
-                        Gtk.ScrolledWindow {
+                        Gtk.Stack stack {
+                            styles ["content-stack"]
                             vexpand: true;
-
-                            Gtk.Stack stack {
-                                styles ["content-stack"]
-                            }
+                            valign: fill;
+                            transition-type: crossfade;
                         }
                     }
                 }
