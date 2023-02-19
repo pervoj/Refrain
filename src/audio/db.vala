@@ -45,7 +45,8 @@ public class Refrain.Audio.DB : Object {
      */
     public void init (bool reinit = false) throws DBError {
         // DB file path
-        var db_file = File.new_build_filename (Constants.DATA_DIR, FILE_NAME);
+        // var db_file = File.new_build_filename (Constants.DATA_DIR, FILE_NAME);
+        var db_file = File.new_build_filename ("/home/pervoj/Temp", FILE_NAME);
 
         if (!db_file.query_exists ()) {
             throw new DBError.INITIALIZATION_FAILED ("%s doesn't exist", db_file.get_path ());
@@ -59,6 +60,18 @@ public class Refrain.Audio.DB : Object {
             if (ec != Sqlite.OK) {
                 throw new DBError.INITIALIZATION_FAILED ("%d", ec);
             }
+        }
+
+        try {
+            Gee.task<void> (() => {
+                try {
+                    Author.init ();
+                } catch (Audio.DBError e) {
+                    error ("%s\n", e.message);
+                }
+            });
+        } catch (ThreadError e) {
+            error ("%s\n", e.message);
         }
     }
 
@@ -82,12 +95,9 @@ public class Refrain.Audio.DB : Object {
             return false;
         }
 
-        scan_dirs_status (0, files.length);
-
-        for (int i = 0; i < files.length; i++) {
+        foreach (var file in files) {
             try {
-                insert_song_from_file (files[i]);
-                scan_dirs_status (i + 1, files.length);
+                insert_song_from_file (file);
             } catch {
                 return false;
             }
@@ -101,7 +111,6 @@ public class Refrain.Audio.DB : Object {
             cb (scan_dirs ());
         });
     }
-    public signal void scan_dirs_status (int loaded, int total);
 
     private Gst.PbUtils.Discoverer discoverer;
     public Song insert_song_from_file (File file) throws Error, DBError {
@@ -119,8 +128,6 @@ public class Refrain.Audio.DB : Object {
         string _author;
         string _album;
         int _track;
-        Bytes? _cover = null;
-        string? _css = null;
 
         // get title
         tags.get_string (Gst.Tags.TITLE, out _title);
@@ -149,55 +156,24 @@ public class Refrain.Audio.DB : Object {
         }
 
         // get author instance
-        Author author;
-        try {
-            author = new Author.from_name (_author);
-        } catch {
-            author = Author.insert (_author);
+        var author = Author.get_one_for_name (_author);
+        if (author == null) {
+            Author.insert (_author);
+            author = Author.get_one_for_name (_author);
         }
 
         // get album instance
-        Album album;
-        try {
-            album = new Album.from_name (author, _album);
-        } catch {
-            // get cover
-            var sample = get_cover_sample (tags);
-            if (sample != null) {
-                var buffer = sample.get_buffer ();
-                if (buffer != null) {
-                    _cover = get_image_bytes_from_buffer (buffer);
-                }
-            }
-
-            if (_cover != null) {
-                // get cover colors css
-                var ct = new Subprocess.newv (
-                    {
-                        "python",
-                        Path.build_filename (Constants.DATA_DIR, "palette-getter.py"),
-                        file.get_path ()
-                    },
-                    SubprocessFlags.STDOUT_PIPE
-                );
-                var dis = new DataInputStream (ct.get_stdout_pipe ());
-                string _s_css = "";
-                string _s;
-                while ((_s = dis.read_line ()) != null) {
-                    _s_css += _s + "\n";
-                }
-                if (_s_css != "") _css = _s_css;
-            }
-
-            album = Album.insert (author, _album, _cover, _css);
+        var album = Album.get_one_for_name (author.id, _album);
+        if (album == null) {
+            Album.insert (author, _album);
+            album = Album.get_one_for_name (author.id, _album);
         }
 
         // get song instance
-        Song song;
-        try {
-            song = new Song.from_file (file);
-        } catch {
-            song = Song.insert (album, file, _title, _track);
+        var song = Song.get_one_for_file (file);
+        if (song == null) {
+            Song.insert (album, file, _title, _track);
+            song = Song.get_one_for_file (file);
         }
 
         return song;

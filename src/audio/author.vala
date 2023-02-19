@@ -20,128 +20,44 @@ public class Refrain.Audio.Author : Object {
     public string id { get; construct; }
     public string name { get; construct; }
 
-    public static Author insert (string name) throws DBError {
-        unowned var db = DB.get_default ().get_db ();
-        string query = """
-            INSERT
-            INTO author (name)
-            VALUES (?)
-        """;
+    private string[] _album_ids;
+    private Album[] _albums = {};
 
-        Sqlite.Statement stmt;
-        int result = db.prepare_v2 (query, -1, out stmt);
-        if (result != Sqlite.OK) {
-            throw new DBError.PREPARATION_FAILED ("%d", result);
-        }
-
-        result = stmt.bind_text (1, name);
-        if (result != Sqlite.OK) {
-            throw new DBError.PROPERTIES_BINDING_FAILED ("%d", result);
-        }
-
-        stmt.step ();
-
-        return new Author.from_name (name);
-    }
-
-    public Author (string id) throws DBError {
-        unowned var db = DB.get_default ().get_db ();
-        string query = "SELECT * FROM author WHERE id = ?";
-
-        Sqlite.Statement stmt;
-        int result = db.prepare_v2 (query, -1, out stmt);
-        if (result != Sqlite.OK) {
-            throw new DBError.PREPARATION_FAILED ("%d", result);
-        }
-
-        result = stmt.bind_text (1, id);
-        if (result != Sqlite.OK) {
-            throw new DBError.PROPERTIES_BINDING_FAILED ("%d", result);
-        }
-
-        string author_id = "";
-        string name = "";
-
-        int cols = stmt.column_count ();
-        while (stmt.step () == Sqlite.ROW) {
-            for (int i = 0; i < cols; i++) {
-                string col_name = stmt.column_name (i) ?? "<none>";
-                switch (col_name) {
-                    case "id":
-                        author_id = stmt.column_text (i) ?? "";
-                        break;
-                    case "name":
-                        name = stmt.column_text (i) ?? "";
-                        break;
-                }
+    public Album[] get_albums () throws DBError {
+        if (_album_ids.length > _albums.length) {
+            _albums = {};
+            foreach (var album in _album_ids) {
+                _albums += Album.get_one (album);
             }
         }
-
-        if (author_id == "") {
-            throw new DBError.NOT_FOUND ("author %s not found", id);
-        }
-
-        Object (
-            id: author_id,
-            name: name
-        );
+        return _albums;
     }
 
-    public Author.from_name (string name) throws DBError {
-        unowned var db = DB.get_default ().get_db ();
-        string query = "SELECT * FROM author WHERE name = ?";
-
-        Sqlite.Statement stmt;
-        int result = db.prepare_v2 (query, -1, out stmt);
-        if (result != Sqlite.OK) {
-            throw new DBError.PREPARATION_FAILED ("%d", result);
-        }
-
-        result = stmt.bind_text (1, name);
-        if (result != Sqlite.OK) {
-            throw new DBError.PROPERTIES_BINDING_FAILED ("%d", result);
-        }
-
-        string id = "";
-        string author_name = "";
-
-        int cols = stmt.column_count ();
-        while (stmt.step () == Sqlite.ROW) {
-            for (int i = 0; i < cols; i++) {
-                string col_name = stmt.column_name (i) ?? "<none>";
-                switch (col_name) {
-                    case "id":
-                        id = stmt.column_text (i) ?? "";
-                        break;
-                    case "name":
-                        author_name = stmt.column_text (i) ?? "";
-                        break;
-                }
-            }
-        }
-
-        if (id == "") {
-            throw new DBError.NOT_FOUND ("author %s not found", id);
-        }
-
-        Object (
-            id: id,
-            name: author_name
-        );
-    }
-
-    public Author.create (string id, string name) {
+    private Author (string id, string name, string[] album_ids = {}) {
         Object (
             id: id,
             name: name
         );
+        this._album_ids = album_ids;
     }
 
-    public static Author[] list () throws DBError {
-        Author[] authors = {};
+    private static bool initialized = false;
+    public static void init () throws DBError {
+        if (initialized) return;
+        load ();
+    }
+
+    private static HashTable<string, Author> _cache;
+    public static void load (bool clear_cache = true) throws DBError {
+        initialized = true;
+        if (_cache == null) {
+            _cache = new HashTable<string, Author> (str_hash, str_equal);
+        }
+
+        if (clear_cache) _cache.remove_all ();
 
         unowned var db = DB.get_default ().get_db ();
-        string query = "SELECT * FROM author ORDER BY name ASC";
+        string query = "SELECT * FROM author";
 
         Sqlite.Statement stmt;
         int result = db.prepare_v2 (query, -1, out stmt);
@@ -165,31 +81,28 @@ public class Refrain.Audio.Author : Object {
                 }
             }
             if (id == "") continue;
+            if (_cache.contains (id)) continue;
 
-            authors += new Author.create (id, name);
-        }
-
-        return authors;
-    }
-    public delegate void ListCB (Author[] res, DBError? err);
-    public static void list_async (ListCB cb) {
-        new Thread<void> ("refrain_audio_author_list_async", () => {
-            Author[] res = {};
-            DBError? err = null;
-            try {
-                res = list ();
-            } catch (DBError e) {
-                err = e;
+            var album_instances = Album.get_all_for_author (id);
+            string[] album_ids = {};
+            foreach (var album in album_instances) {
+                album_ids += album.id;
             }
-            cb (res, err);
-        });
+
+            _cache.set (id, new Author (id, name, album_ids));
+        }
     }
 
-    public Album[] get_albums () throws DBError {
-        Album[] albums = {};
+    public static void insert (string name) throws DBError {
+        init ();
+        if (get_one_for_name (name) != null) return;
 
         unowned var db = DB.get_default ().get_db ();
-        string query = "SELECT id FROM album WHERE author = ? ORDER BY name ASC";
+        string query = """
+            INSERT
+            INTO author (name)
+            VALUES (?)
+        """;
 
         Sqlite.Statement stmt;
         int result = db.prepare_v2 (query, -1, out stmt);
@@ -197,66 +110,38 @@ public class Refrain.Audio.Author : Object {
             throw new DBError.PREPARATION_FAILED ("%d", result);
         }
 
-        result = stmt.bind_text (1, this.id);
+        result = stmt.bind_text (1, name);
         if (result != Sqlite.OK) {
             throw new DBError.PROPERTIES_BINDING_FAILED ("%d", result);
         }
 
-        int cols = stmt.column_count ();
-        while (stmt.step () == Sqlite.ROW) {
-            string id = "";
-            for (int i = 0; i < cols; i++) {
-                string col_name = stmt.column_name (i) ?? "<none>";
-                switch (col_name) {
-                    case "id":
-                        id = stmt.column_text (i) ?? "";
-                        break;
-                }
-            }
-            if (id == "") continue;
+        stmt.step ();
 
-            albums += new Album (id);
+        load (false);
+    }
+
+    public static Author? get_one (string id) throws DBError {
+        init ();
+        return _cache.get (id);
+    }
+
+    public static Author? get_one_for_name (string name) throws DBError {
+        init ();
+        var vals = _cache.get_values ();
+        foreach (var val in vals) {
+            if (val.name != name) continue;
+            return val;
         }
-
-        return albums;
-    }
-    public delegate void GetAlbumsCB (Album[] res, DBError? err);
-    public void get_albums_async (GetAlbumsCB cb) {
-        new Thread<void> ("refrain_audio_author_get_albums_async", () => {
-            Album[] res = {};
-            DBError? err = null;
-            try {
-                res = get_albums ();
-            } catch (DBError e) {
-                err = e;
-            }
-            cb (res, err);
-        });
+        return null;
     }
 
-    public Song[] get_songs () throws DBError {
-        Song[] songs = {};
-
-        foreach (Album album in get_albums ()) {
-            foreach (Song song in album.get_songs ()) {
-                songs += song;
-            }
+    public static Author[] get_all () throws DBError {
+        init ();
+        Author[] res = {};
+        var vals = _cache.get_values ();
+        foreach (var val in vals) {
+            res += val;
         }
-
-        return songs;
+        return res;
     }
-    public delegate void GetSongsCB (Song[] res, DBError? err);
-    public void get_songs_async (GetSongsCB cb) {
-        new Thread<void> ("refrain_audio_author_get_songs_async", () => {
-            Song[] res = {};
-            DBError? err = null;
-            try {
-                res = get_songs ();
-            } catch (DBError e) {
-                err = e;
-            }
-            cb (res, err);
-        });
-    }
-
 }
