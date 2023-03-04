@@ -41,8 +41,8 @@ dependencies = [
 blueprints_ui = []
 blueprints_vala = []
 foreach b : blueprints_src
-	blueprints_ui += b.replace('.blp', '.ui')
-	blueprints_vala += b + '.vala'
+  blueprints_ui += b.replace('.blp', '.ui')
+  blueprints_vala += b + '.vala'
 endforeach
 
 
@@ -54,9 +54,9 @@ blueprints = custom_target('blueprints',
 
 
 sources += custom_target('blueprints_hack',
-	input: blueprints,
-	output: blueprints_vala,
-	command: [find_program('touch'), '@OUTPUT@']
+  input: blueprints,
+  output: blueprints_vala,
+  command: [find_program('touch'), '@OUTPUT@']
 )
 
 
