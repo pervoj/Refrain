@@ -62,10 +62,11 @@ public class Refrain.Audio.DB : Object {
             }
         }
 
+        // init the entire library management
         try {
             Gee.task<void> (() => {
                 try {
-                    Author.init ();
+                    Author.init (); // this will init Album and Song as well
                 } catch (Audio.DBError e) {
                     error ("%s\n", e.message);
                 }
